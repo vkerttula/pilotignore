@@ -1,6 +1,5 @@
 <p align="center">
-<p align="center">
-  <img src="assets/logo.svg" alt="pilotignore logo" width="120" height="156">
+  <img src="https://raw.githubusercontent.com/vkerttula/pilotignore/main/assets/logo.svg" alt="pilotignore logo" width="120" height="156">
 </p>
 
 </p>
@@ -61,9 +60,9 @@ One tool. One philosophy: **Agent boundaries should be simple.**
 > **Copilot:** "I'm sorry, I cannot access `config/secrets.json` because my file-reading tool was denied by your `.pilotignore` rules."
 
 <p align="center">
-  <img src="assets/copilot-vscode.png" alt="Copilot VS Code Chat blocked" width="49%">
+  <img src="https://raw.githubusercontent.com/vkerttula/pilotignore/main/assets/copilot-vscode.png" alt="Copilot VS Code Chat blocked" width="49%">
   &nbsp;
-  <img src="assets/copilot-cli.png" alt="Copilot CLI blocked" width="49%">
+  <img src="https://raw.githubusercontent.com/vkerttula/pilotignore/main/assets/copilot-cli.png" alt="Copilot CLI blocked" width="49%">
 </p>
 
 **Same agent. 0% leaked secrets. Peace of mind.**
