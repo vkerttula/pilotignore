@@ -1,6 +1,6 @@
 {
   "name": "pilotignore",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Prevent Copilot from reading your secrets using .pilotignore. Works like .gitignore but for GitHub Copilot.",
   "type": "module",
   "main": "bin/cli.js",
@@ -21,6 +21,10 @@
     "agent",
     "pre-tool-use",
     "copilot-hooks"
+  ],
+  "files": [
+    "bin",
+    "templates"
   ],
   "author": "Valtteri Kerttula",
   "license": "MIT"

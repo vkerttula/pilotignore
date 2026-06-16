@@ -91,7 +91,7 @@ project-root/
 │       └── pilotignore.json   <-- Tells Copilot to run the firewall from node_modules
 ├── .copilot/
 │   └── logs/
-│       └── pilotignore.log    <-- Action logs accumulate here (add this to your .gitignore!)
+│       └── pilotignore.log    <-- Action logs accumulate here (automatically added to your .gitignore!)
 ├── .pilotignore               <-- Add your sensitive files/folders to this blocklist
 └── package.json               <-- pilotignore is installed as a devDependency
 

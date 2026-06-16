@@ -49,7 +49,31 @@ async function init() {
         path.join(templatesDir, "default.pilotignore"),
         targetPilotignore,
       );
-      console.log("✅ Created default file: .pilotignore");
+    }
+
+    // 5. Add .copilot/ to .gitignore if not already ignored
+    const targetGitignore = path.join(targetDir, ".gitignore");
+    try {
+      let gitignoreContent = "";
+      try {
+        gitignoreContent = await fs.readFile(targetGitignore, "utf8");
+      } catch {
+        // .gitignore doesn't exist yet, we will create it
+      }
+
+      if (!gitignoreContent.includes(".copilot")) {
+        const separator = gitignoreContent && !gitignoreContent.endsWith("\n") ? "\n" : "";
+        await fs.writeFile(
+          targetGitignore,
+          gitignoreContent + separator + "\n# pilotignore logs\n.copilot/\n",
+          "utf8"
+        );
+        console.log("✅ Added .copilot/ to .gitignore");
+      } else {
+        console.log("ℹ️  .copilot/ already in .gitignore, skipping.");
+      }
+    } catch (err) {
+      console.log("ℹ️  Could not update .gitignore: " + err.message);
     }
 
     console.log("\n🚀 pilotignore initialization complete!");
