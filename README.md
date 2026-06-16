@@ -111,12 +111,12 @@ Simply add your sensitive files to the generated `.pilotignore` file at the root
 
 Commit the `.pilotignore` file and the generated `.github/hooks/` directory configuration to Git. That's it.
 
-| Target               | Status         | Note                                                                                                |
-| -------------------- | -------------- | --------------------------------------------------------------------------------------------------- |
-| **Copilot CLI**      | 🛡️ Blocked     | Local commands (`view`, `read_file`) are intercepted.                                               |
-| **IDE Chat**         | 🛡️ Blocked     | Agentic workspace reads are stopped at the tool level.                                              |
-| **Cloud Agent**      | ⏳ Coming soon | Support for GitHub's secure cloud sandbox (see V2 roadmap).                                         |
-| **IDE Autocomplete** | ⏳ Coming soon | Ghost-text autocomplete does not use tools (see V3 roadmap). Already possible with vscode settings. |
+| Target               | Status         | Note                                                                                             |
+| -------------------- | -------------- | ------------------------------------------------------------------------------------------------ |
+| **Copilot CLI**      | 🛡️ Blocked     | Local commands (`view`, `read_file`) are intercepted.                                            |
+| **IDE Chat**         | 🛡️ Blocked     | Agentic workspace reads are stopped at the tool level.                                           |
+| **Cloud Agent**      | ⏳ Coming soon | Support for GitHub's secure cloud sandbox (see roadmap).                                         |
+| **IDE Autocomplete** | ⏳ Coming soon | Ghost-text autocomplete does not use tools (see roadmap). Already possible with vscode settings. |
 
 ## How It Works
 
@@ -132,11 +132,12 @@ Commit the `.pilotignore` file and the generated `.github/hooks/` directory conf
 ## Roadmap
 
 - [x] Block Copilot Cloud Agent & CLI tools via `preToolUse` hooks.
-- [x] Basic exact-path and glob matching.
-- [ ] **V1.1:** Add global installation support (`pilotignore init --global`) for user-level protection across all local repositories.
-- [ ] **V2:** Cloud Agent support (syncing hooks to GitHub's secure cloud sandbox).
-- [ ] **V2:** Inject `.pilotignore` rules into Copilot Chat's `custom instructions` for double redundancy.
-- [ ] **V3:** Sync `.pilotignore` rules to `.vscode/settings.json` to automatically disable IDE ghost-text autocomplete for sensitive files.
+- [x] Basic exact-path and folder-level matching.
+- [ ] **v0.2.0:** Add full glob pattern matching support (e.g. `*.env`, `secret-*.json`).
+- [ ] **v0.3.0:** Add global installation support (`pilotignore init --global`) for user-level protection across all local repositories.
+- [ ] **v1.0.0:** Cloud Agent support (syncing hooks to GitHub's secure cloud sandbox).
+- [ ] **v1.0.0:** Inject `.pilotignore` rules into Copilot Chat's `custom instructions` to prevent AI from using alternative terminal workarounds (e.g. `cat`).
+- [ ] **v2.0.0:** Sync `.pilotignore` rules to `.vscode/settings.json` to automatically disable IDE ghost-text autocomplete for sensitive files.
 
 ## Links
 
