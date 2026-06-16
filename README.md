@@ -15,6 +15,17 @@
   <strong>like <code>.gitignore</code>, but for github copilot agents</strong>
 </p>
 
+> [!WARNING]
+>
+> **EARLY DEVELOPMENT/EXPERIMENTAL PHASE. USE AT YOUR OWN RISK.**
+>
+> This project is currently in active development and still contain bugs or unhandled edge cases.
+>
+> AI technologies and their capabilities are evolving rapidly and continuously, meaning new bypass methods could emerge. Use this tool strictly at your own risk. It is a supplementary security layer, not a silver bullet. Always follow best practices for secret management: use secure environment vaults, never commit hardcoded secrets to your repository, and **never expose data to an AI agent that you absolutely cannot afford to leak.** Be the boss of your agent, not the other way around.
+
+> [!TIP]
+> **Fun fact:** Some other AI coding assistants already have native, built-in features to prevent the AI from reading specific files. Until GitHub Copilot introduces an official, first-class `.copilotignore` feature, `pilotignore` is here to bridge the gap!
+
 GitHub Copilot Cloud Agent and CLI are powerful tools that can navigate your codebase, read files, and execute commands. But sometimes, they shouldn't see everything. `pilotignore` is a lightweight CLI that sets up a programmatic firewall — actively blocking AI agents from reading `.env` files, API keys, or private configs.
 
 One tool. One philosophy: **Agent boundaries should be simple.**
@@ -48,6 +59,12 @@ One tool. One philosophy: **Agent boundaries should be simple.**
 
 > **You:** "What is the database password inside config/secrets.json?"
 > **Copilot:** "I'm sorry, I cannot access `config/secrets.json` because my file-reading tool was denied by your `.pilotignore` rules."
+
+<p align="center">
+  <img src="assets/copilot-vscode.png" alt="Copilot VS Code Chat blocked" width="49%">
+  &nbsp;
+  <img src="assets/copilot-cli.png" alt="Copilot CLI blocked" width="49%">
+</p>
 
 **Same agent. 0% leaked secrets. Peace of mind.**
 
