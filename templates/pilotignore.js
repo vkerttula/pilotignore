@@ -109,12 +109,22 @@ process.stdin.on("end", () => {
     }
 
     const isBlocked = candidates.some((candidate) => {
-      if (!candidate.includes(path.sep) && !candidate.includes("/"))
+      const absolutePath = path.resolve(currentCwd, candidate);
+      const relative = path.relative(currentCwd, absolutePath).replace(/\\/g, "/");
+
+      return ignoreRules.some((rule) => {
+        const cleanRule = rule.endsWith("/") ? rule.slice(0, -1) : rule;
+
+        const relLower = relative.toLowerCase();
+        const ruleLower = cleanRule.toLowerCase();
+
+        if (relLower === ruleLower) return true;
+        if (relLower.startsWith(ruleLower + "/")) return true;
+        if (relLower.endsWith("/" + ruleLower)) return true;
+        if (relLower.includes("/" + ruleLower + "/")) return true;
+
         return false;
-      const relative = path.relative(currentCwd, candidate).replace(/\\/g, "/");
-      return ignoreRules.some(
-        (rule) => relative.endsWith(rule) || relative === rule,
-      );
+      });
     });
 
     if (isBlocked) {
