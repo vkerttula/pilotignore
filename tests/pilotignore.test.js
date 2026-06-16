@@ -8,11 +8,11 @@ import { fileURLToPath } from "url";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-const firewallScriptPath = path.resolve(__dirname, "../templates/pilotignore.js");
+const firewallScriptPath = path.resolve(__dirname, "../templates/pilotignore.cjs");
 
 // Helper function to run the firewall script
 function runFirewall(cwd, payload, stdinText = null) {
-  const scriptToRun = path.join(cwd, ".github", "hooks", "pilotignore.js");
+  const scriptToRun = path.join(cwd, ".github", "hooks", "pilotignore.cjs");
   return new Promise((resolve, reject) => {
     const child = spawn("node", [scriptToRun], {
       cwd,
@@ -52,7 +52,7 @@ async function createTempProject(rules = []) {
   await fs.mkdir(path.join(tempDir, ".github", "hooks"), { recursive: true });
   await fs.copyFile(
     firewallScriptPath,
-    path.join(tempDir, ".github", "hooks", "pilotignore.js")
+    path.join(tempDir, ".github", "hooks", "pilotignore.cjs")
   );
 
   return tempDir;

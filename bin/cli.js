@@ -34,10 +34,10 @@ async function init() {
 
     // 3. Copy the actual firewall script
     await fs.copyFile(
-      path.join(templatesDir, "pilotignore.js"),
-      path.join(githubHooksDir, "pilotignore.js"),
+      path.join(templatesDir, "pilotignore.cjs"),
+      path.join(githubHooksDir, "pilotignore.cjs"),
     );
-    console.log("✅ Copied: .github/hooks/pilotignore.js");
+    console.log("✅ Copied: .github/hooks/pilotignore.cjs");
 
     // 4. Create .pilotignore only if it doesn't exist
     const targetPilotignore = path.join(targetDir, ".pilotignore");

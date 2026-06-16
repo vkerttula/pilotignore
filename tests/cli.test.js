@@ -45,7 +45,7 @@ test("cli init - sets up all files in clean directory", async (t) => {
     // Verify directories and files exist
     const hooksDir = path.join(tempDir, ".github", "hooks");
     const jsonPath = path.join(hooksDir, "pilotignore.json");
-    const jsPath = path.join(hooksDir, "pilotignore.js");
+    const jsPath = path.join(hooksDir, "pilotignore.cjs");
     const pilotignorePath = path.join(tempDir, ".pilotignore");
 
     const jsonExists = await fs.access(jsonPath).then(() => true).catch(() => false);
@@ -53,7 +53,7 @@ test("cli init - sets up all files in clean directory", async (t) => {
     const pilotignoreExists = await fs.access(pilotignorePath).then(() => true).catch(() => false);
 
     assert.ok(jsonExists, "pilotignore.json was not created");
-    assert.ok(jsExists, "pilotignore.js was not created");
+    assert.ok(jsExists, "pilotignore.cjs was not created");
     assert.ok(pilotignoreExists, ".pilotignore was not created");
 
     // Verify default .pilotignore contents
