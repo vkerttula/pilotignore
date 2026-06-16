@@ -1,12 +1,7 @@
 <p align="center">
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 130" width="120" height="156">
-  <path d="M 10,15 
-           L 90,15 
-           C 90,65 75,105 50,120 
-           C 25,105 10,65 10,15 
-           Z" 
-        fill="#000000" />
-</svg>
+<p align="center">
+  <img src="assets/logo.svg" alt="pilotignore logo" width="120" height="156">
+</p>
 
 </p>
 
