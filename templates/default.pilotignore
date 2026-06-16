@@ -1,0 +1,6 @@
+# Add files here to hide them from GitHub Copilot
+# Examples:
+# secrets.json
+# .env
+# Block from reading this file
+.pilotignore

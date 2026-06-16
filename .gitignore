@@ -1,0 +1,11 @@
+node_modules/
+
+*.log
+npm-debug.log*
+
+.copilot/
+.github/hooks/pilotignore.json
+.github/hooks/pilotignore.js
+
+.DS_Store
+Thumbs.db

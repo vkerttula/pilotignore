@@ -1,0 +1,15 @@
+{
+  "version": 1,
+  "hooks": {
+    "preToolUse": [
+      {
+        "type": "command",
+        "bash": "node .github/hooks/pilotignore.js",
+        "powershell": "node .github\\hooks\\pilotignore.js",
+        "windows": "node .github\\hooks\\pilotignore.js",
+        "cwd": ".",
+        "timeoutSec": 5
+      }
+    ]
+  }
+}
