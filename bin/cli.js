@@ -18,7 +18,8 @@ async function init() {
 
   const targetDir = process.cwd();
   const githubHooksDir = path.join(targetDir, ".github", "hooks");
-  const templatesDir = path.join(__dirname, "..", "templates");
+  const srcDir = path.join(__dirname, "..", "src");
+  const templatesDir = path.join(srcDir, "templates");
 
   try {
     // 1. Create the directory structure
@@ -34,7 +35,7 @@ async function init() {
 
     // 3. Copy the actual firewall script
     await fs.copyFile(
-      path.join(templatesDir, "pilotignore.cjs"),
+      path.join(srcDir, "pilotignore.cjs"),
       path.join(githubHooksDir, "pilotignore.cjs"),
     );
     console.log("✅ Copied: .github/hooks/pilotignore.cjs");

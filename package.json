@@ -24,7 +24,7 @@
   ],
   "files": [
     "bin",
-    "templates"
+    "src"
   ],
   "author": "Valtteri Kerttula",
   "license": "MIT"
