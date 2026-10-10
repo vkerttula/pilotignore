@@ -32,6 +32,17 @@ npx pilotignore verify    # checks that blocking actually works
 
 Add paths to `.pilotignore`, then commit it together with `.github/hooks/`.
 
+## Try it first
+
+Want to see it block a real agent before adding it to your project?
+
+```bash
+git clone https://github.com/vkerttula/pilotignore && cd pilotignore
+npm run sandbox
+```
+
+This creates a small demo project with pilotignore installed. Open it in VS Code or Copilot CLI and follow the test prompts in [`tests/README.md`](tests/README.md#test-prompts).
+
 ## Writing rules
 
 `.pilotignore` uses `.gitignore` syntax:
@@ -109,13 +120,21 @@ A few deliberate design choices:
 - **Run `npx pilotignore verify`.** It checks the setup and fires test calls at the installed hook using your own rules.
 - **Nothing in the log** means Copilot didn't run the hook. Check that `.github/hooks/pilotignore.json` exists and that hooks aren't disabled in your Copilot settings.
 - **A blocked file shows `ALLOW` in the log** means the path wasn't found in the tool call. Please [open an issue](https://github.com/vkerttula/pilotignore/issues) with the log lines.
-- **After upgrading pilotignore**, run `npx pilotignore init` again to update the hook script. Your `.pilotignore` is never overwritten.
+- **After upgrading pilotignore**, run `npx pilotignore init` again to update the hook script. Your `.pilotignore` is never overwritten. Check the [changelog](CHANGELOG.md) for rule changes.
+
+## Uninstall
+
+```bash
+npm uninstall pilotignore
+rm .pilotignore .github/hooks/pilotignore.json .github/hooks/pilotignore.cjs
+```
+
+Optionally remove `.copilot/logs/pilotignore.log` and the `# pilotignore logs` entry from your `.gitignore`.
 
 ## Roadmap
 
 - [x] Block Copilot CLI and VS Code agent tool calls via `preToolUse` hooks
 - [x] `.gitignore`-style rules, shell scanning, directory protection, `verify` (v0.2.0)
-- [ ] `init --global` using Copilot's user-level hooks directory (`~/.copilot/hooks/`)
 - [ ] Test and document Copilot cloud agent
 - [ ] Optionally sync rules to VS Code `search.exclude` / `files.exclude` to cover search and indexing
 - [ ] Explore filtering blocked files out of search results with a `postToolUse` hook
