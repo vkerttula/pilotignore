@@ -1,7 +1,7 @@
 {
   "name": "pilotignore",
   "version": "0.2.0",
-  "description": "Prevent Copilot from reading your secrets using .pilotignore. Works like .gitignore but for GitHub Copilot.",
+  "description": "Keep GitHub Copilot agents out of the files you list in .pilotignore. Works like .gitignore, for Copilot tool calls.",
   "type": "module",
   "main": "bin/cli.js",
   "bin": {

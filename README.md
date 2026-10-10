@@ -2,32 +2,15 @@
   <img src="https://raw.githubusercontent.com/vkerttula/pilotignore/main/assets/logo.svg" alt="pilotignore logo" width="120" height="156">
 </p>
 
-</p>
-
 <h1 align="center">
 
-`.pilotignore` — keep your secrets secret
+`.pilotignore`
 
 </h1>
 
 <p align="center">
-  <strong>like <code>.gitignore</code>, but for github copilot agents</strong>
+  <strong>like <code>.gitignore</code>, but for GitHub Copilot agents</strong>
 </p>
-
-> [!WARNING]
->
-> **EARLY DEVELOPMENT/EXPERIMENTAL PHASE. USE AT YOUR OWN RISK.**
->
-> This project is currently in active development and may still contain bugs or unhandled edge cases.
->
-> AI technologies and their capabilities are evolving rapidly and continuously, meaning new bypass methods could emerge. Use this tool strictly at your own risk. It is a supplementary security layer, not a silver bullet. Always follow best practices for secret management: use secure environment vaults, never commit hardcoded secrets to your repository, and **never expose data to an AI agent that you absolutely cannot afford to leak.** Be the boss of your agent, not the other way around.
-
-> [!TIP]
-> **Fun fact:** VS Code Copilot Chat now ships an official `.copilotignore` implementation — but it governs suggestions and chat context, not agent-mode tool reads, and Copilot CLI has no equivalent yet. Until GitHub's native coverage extends to agentic tool calls, `pilotignore` is here to bridge the gap!
-
-GitHub Copilot Cloud Agent and CLI are powerful tools that can navigate your codebase, read files, and execute commands. But sometimes, they shouldn't see everything. `pilotignore` is a lightweight CLI that sets up a programmatic firewall — actively blocking AI agents from reading `.env` files, API keys, or private configs.
-
-One tool. One philosophy: **Agent boundaries should be simple.**
 
 <p align="center">
   <a href="https://www.npmjs.com/package/pilotignore"><img src="https://img.shields.io/npm/v/pilotignore?style=flat&color=000000" alt="NPM Version"></a>
@@ -35,186 +18,119 @@ One tool. One philosophy: **Agent boundaries should be simple.**
   <a href="LICENSE"><img src="https://img.shields.io/github/license/vkerttula/pilotignore?style=flat&color=000000" alt="License"></a>
 </p>
 
-## Table of Contents
+Copilot agents read files and run commands in your project. `pilotignore` lets you list the files they should leave alone. It installs a Copilot `preToolUse` hook that checks every tool call before it runs and denies the ones that touch a path in your `.pilotignore`. Everything else works exactly as before.
 
-<p align="center">
-  <a href="#before--after">Before/After</a> •
-  <a href="#install">Install</a> •
-  <a href="#what-you-get">What You Get</a> •
-  <a href="#how-it-works">How It Works</a> •
-  <a href="#security-model--design-decisions">Security Model</a> •
-  <a href="#roadmap">Roadmap</a>
-</p>
+It's a small, zero-dependency tool for keeping an agent out of files it has no business opening: personal notes, local configs, drafts, generated data. It filters tool calls; it doesn't control everything Copilot can see (see [Good to know](#good-to-know)).
 
----
-
-## Before / After
-
-### 🔓 Normal Copilot Agent
-
-> **You:** "What is the database password inside config/secrets.json?"
-> **Copilot:** "Looking at your `config/secrets.json` file, the database password is `super_secret_p4ssw0rd`. I can help you rotate this if you need!"
-
-### 🛡️ Copilot + pilotignore
-
-> **You:** "What is the database password inside config/secrets.json?"
-> **Copilot:** "I'm sorry, I cannot access `config/secrets.json` because my file-reading tool was denied by your `.pilotignore` rules."
-
-<p align="center">
-  <img src="https://raw.githubusercontent.com/vkerttula/pilotignore/main/assets/copilot-vscode.png" alt="Copilot VS Code Chat blocked" width="49%">
-  &nbsp;
-  <img src="https://raw.githubusercontent.com/vkerttula/pilotignore/main/assets/copilot-cli.png" alt="Copilot CLI blocked" width="49%">
-</p>
-
-**Same agent. 0% leaked secrets. Peace of mind.**
-
-## Install
-
-Install `pilotignore` as a development dependency. This ensures your project is locked to a specific version and makes updates seamless.
+## Quick start
 
 ```bash
-# 1. Install the package
 npm install -D pilotignore
-
-# 2. Initialize the hooks and .pilotignore file
-npx pilotignore init
-
-# 3. Confirm the firewall actually works in your project
-npx pilotignore verify
-
+npx pilotignore init      # adds the hook and a .pilotignore file
+npx pilotignore verify    # checks that blocking actually works
 ```
 
-## What You Get
+Add paths to `.pilotignore`, then commit it together with `.github/hooks/`.
 
-After initialization, your project will have the following structure:
+## Writing rules
+
+`.pilotignore` uses `.gitignore` syntax:
 
 ```text
-project-root/
-├── .github/
-│   └── hooks/
-│       ├── pilotignore.json   <-- Tells Copilot to run the firewall before every tool call
-│       └── pilotignore.cjs    <-- The firewall itself (re-run `init` after upgrading)
-├── .copilot/
-│   └── logs/
-│       └── pilotignore.log    <-- Action logs accumulate here (automatically added to your .gitignore!)
-├── .pilotignore               <-- Add your sensitive files/folders to this blocklist
-└── package.json               <-- pilotignore is installed as a devDependency
-
+.env                   # this name, at any depth
+*.pem                  # any file ending in .pem
+.env*                  # .env, .env.local, .env.production, ...
+/config.json           # only at the project root
+private/               # everything under any private/ directory
+notes/**               # everything under the root notes/
+!notes/public.md       # ...except this file
 ```
 
-Simply add your sensitive files to the generated `.pilotignore` file at the root of your project. The syntax follows `.gitignore` conventions — globs, directory rules, root anchoring and `!` negations all work:
+Matching is case-insensitive. The default `.pilotignore` also lists itself and the hook files, so the agent can't read the rules, change them, or remove the hook.
+
+## What it looks like
+
+When the agent tries to open a blocked file, the hook denies the tool call and tells the agent why. In Copilot CLI (abbreviated):
 
 ```text
-# Add files here to hide them from GitHub Copilot
-# Supports gitignore-style patterns:
-#   .env                  exact file, matched at any depth
-#   *.pem                 wildcard: any file ending in .pem
-#   .env*                 .env, .env.local, .env.production, ...
-#   secrets/              everything under any secrets/ directory
-#   /config.json          anchored to the project root only
-#   secrets/**            everything under root secrets/
-#   !secrets/public.txt   negation: allow an exception
-# Protect the blocklist itself — prevents the agent from reading
-# the ruleset or disabling protection by editing/removing it
-.pilotignore
-# Protect the firewall files for the same reason
-.github/hooks/pilotignore.cjs
-.github/hooks/pilotignore.json
-
+● Read shopping-list.txt
+  Denied by preToolUse hook: Access to 'shopping-list.txt' is blocked by
+  .pilotignore rule 'shopping-list.txt'.
 ```
 
-Commit the `.pilotignore` file and the generated `.github/hooks/` directory configuration to Git. That's it.
-
-## Verify It Works
-
-Run `npx pilotignore verify` in any project where pilotignore is installed. It checks that the hook config and firewall script are in place, then fires real `preToolUse` payloads at the installed hook using **your actual rules**:
+Shell commands are checked too, including globs and directories:
 
 ```text
-pilotignore verify
-
-  ✓ .github/hooks/pilotignore.json — valid preToolUse hook config
-  ✓ .github/hooks/pilotignore.cjs — firewall script present
-  ✓ .pilotignore — 4 blocking rule(s) loaded
-  ✓ view ".env" (rule ".env") → denied
-  ✓ bash "cat .env" → denied
-  ✓ view "pilotignore-verify-probe" → allowed (no output, Copilot's normal permission flow applies)
-
-✅ All checks passed.
+$ cat shop*            → denied (shopping-list.txt)
+$ rm -rf .github       → denied (contains .github/hooks/pilotignore.cjs)
+$ npm start            → allowed, Copilot asks for approval as usual
 ```
 
-Every real hook decision — including the candidate paths Copilot actually sends — is logged to `.copilot/logs/pilotignore.log`. If a deny doesn't fire when you expect it to, that log is the first place to look.
+Every decision is logged to `.copilot/logs/pilotignore.log`, which `init` adds to your `.gitignore`:
 
-Want to see it block a real agent first? [`tests/README.md`](tests/README.md) walks you through a ready-made demo project and test prompts for VS Code and Copilot CLI.
+```text
+[2026-10-10T14:02:11.482Z] Candidate paths: ["shopping-list.txt"]
+[2026-10-10T14:02:11.483Z] DECISION: DENY (Blocked) - shopping-list.txt matched rule 'shopping-list.txt'.
+```
 
-| Target               | Status         | Note                                                                                             |
-| -------------------- | -------------- | ------------------------------------------------------------------------------------------------ |
-| **Copilot CLI**      | 🛡️ Blocked     | Local commands (`view`, `read_file`) are intercepted.                                            |
-| **IDE Chat**         | 🛡️ Blocked     | Agentic workspace reads are stopped at the tool level.                                           |
-| **Cloud Agent**      | ⏳ Coming soon | Support for GitHub's secure cloud sandbox (see roadmap).                                         |
-| **IDE Autocomplete** | ⏳ Coming soon | Ghost-text autocomplete does not use tools (see roadmap). Already possible with vscode settings. |
+## Where it works
 
-## How It Works
+| Copilot surface | Status |
+| --- | --- |
+| **Copilot CLI** | ✅ Supported and tested |
+| **VS Code Copilot Chat, agent mode** | ✅ Tested. VS Code agent hooks are in Preview. |
+| **Copilot cloud agent** | Should work (it runs `.github/hooks`), not yet tested |
+| **Inline suggestions, workspace index, open editor files** | ❌ Not covered. These don't go through tool calls. |
 
-1. You install the package and run `npx pilotignore init`.
-2. The tool writes an official Copilot Hooks API configuration (`.github/hooks/pilotignore.json`) and the firewall script it runs (`.github/hooks/pilotignore.cjs`).
-3. When a Copilot Agent tries to run a tool (like `view` to read a file, or `bash` to run a command), the `preToolUse` hook fires.
-4. If any path in the tool call matches your `.pilotignore`, the hook returns a `deny` decision with a reason naming the matched rule (exit code `2` for Copilot CLI, `0` for VS Code Chat).
-5. The Agent backs off and tells you which rule blocked it. No files read.
+## Good to know
 
-## Security Model & Design Decisions
+pilotignore only sees **tool calls**. Some ways content reaches Copilot don't involve a tool call it can filter:
 
-These are deliberate choices. Each one favors blocking over leaking.
+- **Content searches.** `grep -r milk .` or the agent's search tool can return matching lines from blocked files without opening them, because the search command itself names no blocked path.
+- **Workspace index and open files.** VS Code indexes your workspace for semantic search, and the file open in your editor is sent as context. Neither goes through a hook.
+- **Indirect reads.** A script or interpreter that builds the path at runtime, for example `python3 -c "open('se'+'crets.json').read()"`, isn't recognized.
 
-- **Fail-closed.** If the hook cannot evaluate a tool call (malformed or empty payload, unreadable `.pilotignore`, unexpected error), the call is **denied**. This matches Copilot's own behavior for command `preToolUse` hooks, which fail closed on crashes and non-zero exits. One exception is Copilot's and can't be changed by pilotignore: **hook timeouts fail open**. The hook is designed to finish far inside its 5-second `timeoutSec`.
-- **Allow is silent.** When nothing matches, the hook prints nothing and exits `0`. It never emits an explicit `allow`, because that could auto-approve tool calls and skip Copilot's normal approval prompts and tool rules. pilotignore only ever *narrows* what the agent may do.
-- **Shell commands are scanned token by token.** `cat .env`, `head -n 5 .env && …` and `ENV_FILE=.env npm start` are denied just like file-reading tools.
-- **Shell globs are expanded against the filesystem.** `cat shop*`, `cat *.tx?` or `cat [s]ecrets.json` are judged by the files the shell would actually pass. Dotfiles are included, which is stricter than bash.
-- **Directories that contain blocked paths are protected.** `rm -rf .github` or `ls journal` is denied when a blocked path lives inside. Anchored rules (`/a/b.txt`) protect their parent directories even if the file doesn't exist yet. Scans stop after 5,000 entries per directory to stay fast.
-- **The ruleset protects itself.** The default `.pilotignore` blocks `.pilotignore` and the two hook files, so the agent can't read the rules, edit them, or delete the firewall.
-- **Deny reasons name the rule.** The agent (and you) can see exactly why a call was blocked. The rules aren't secret: a deny always reveals which rule matched.
-- **Conservative false positives.** A command that merely *mentions* a blocked name is denied too, e.g. `git commit -m "fix .env"` or `git add .pilotignore`. Commit changes to your ruleset yourself.
+To cover these as well, also add sensitive paths to `.gitignore` or VS Code's `files.exclude` / `search.exclude` settings. Those keep them out of the index and search results. Organizations on Copilot Business or Enterprise can additionally use GitHub's [content exclusion](https://docs.github.com/en/copilot/concepts/context/content-exclusion). And as always, real credentials belong in a secret manager, not in a workspace an agent works in.
 
-### Known limitations
+## How it works
 
-- **The project root is exempt** from directory protection, otherwise `ls .` and nearly every command would be denied. Recursive operations on the root, like `grep -r password .`, are therefore **not** blocked.
-- **Interpreters and obfuscation** aren't caught. For example `python3 -c "open('se'+'crets.json').read()"`, base64-encoded paths, or a script the agent writes and then runs.
-- **Directories outside the project** only get direct-match and anchored-rule checks, not filesystem scans.
-- **Timeouts fail open** (Copilot's behavior, see above).
+`init` writes two files: `.github/hooks/pilotignore.json` registers the hook with Copilot, and `.github/hooks/pilotignore.cjs` is the hook itself. Before each tool call, Copilot passes the call's arguments to the hook. The hook collects every path in them, including paths inside shell commands, and checks them against `.pilotignore`.
 
-> [!IMPORTANT]
-> **A determined AI could still obfuscate or script its way around the rules.** pilotignore blocks the front door, not every window. Use at your own risk, and ensure you understand the limitations of agentic boundaries. Be the boss of your agent, not the other way around.
+A few deliberate design choices:
+
+- **Silent allow.** If nothing matches, the hook prints nothing. Copilot's normal approval prompts and tool rules apply as if pilotignore weren't there. It only ever takes permissions away.
+- **Fail-closed.** If the hook can't evaluate a call (malformed input, unreadable rules), the call is denied. This matches how Copilot treats a failing `preToolUse` hook. One exception comes from Copilot itself: a hook that times out is skipped, so the hook is built to finish well within its 5-second limit.
+- **Shell-aware.** Commands are split into tokens. Globs like `cat shop*` are expanded against the filesystem, and operations on a directory that contains blocked paths (`rm -rf .github`) are denied. The project root is exempt, so `ls .` keeps working.
+- **Explains itself.** A deny always names the rule that matched, so you can tell exactly why a call was blocked.
+- **Errs on the side of blocking.** A command that only *mentions* a blocked name, like `git add .pilotignore`, is denied too. Commit changes to your ruleset yourself.
+
+## Troubleshooting
+
+- **Run `npx pilotignore verify`.** It checks the setup and fires test calls at the installed hook using your own rules.
+- **Nothing in the log** means Copilot didn't run the hook. Check that `.github/hooks/pilotignore.json` exists and that hooks aren't disabled in your Copilot settings.
+- **A blocked file shows `ALLOW` in the log** means the path wasn't found in the tool call. Please [open an issue](https://github.com/vkerttula/pilotignore/issues) with the log lines.
+- **After upgrading pilotignore**, run `npx pilotignore init` again to update the hook script. Your `.pilotignore` is never overwritten.
 
 ## Roadmap
 
-- [x] Block Copilot CLI & IDE agent tools via `preToolUse` hooks.
-- [x] Basic exact-path and folder-level matching.
-- [x] **v0.2.0:** Full gitignore-style pattern matching (`*`, `**`, `?`, `!`, `/` anchoring), shell command scanning with glob expansion, directory protection, fail-closed evaluation and `pilotignore verify`.
-- [ ] **v0.3.0:** Add global installation support (`pilotignore init --global`) writing to the official user-level hooks directory (`~/.copilot/hooks/`).
-- [ ] **v1.0.0:** Cloud Agent support (syncing hooks to GitHub's secure cloud sandbox).
-- [ ] **v1.0.0:** Inject `.pilotignore` rules into Copilot Chat's `custom instructions` to prevent AI from using alternative terminal workarounds (e.g. `cat`).
-- [ ] **v2.0.0:** Sync `.pilotignore` rules to `.vscode/settings.json` to automatically disable IDE ghost-text autocomplete for sensitive files.
+- [x] Block Copilot CLI and VS Code agent tool calls via `preToolUse` hooks
+- [x] `.gitignore`-style rules, shell scanning, directory protection, `verify` (v0.2.0)
+- [ ] `init --global` using Copilot's user-level hooks directory (`~/.copilot/hooks/`)
+- [ ] Test and document Copilot cloud agent
+- [ ] Optionally sync rules to VS Code `search.exclude` / `files.exclude` to cover search and indexing
+- [ ] Explore filtering blocked files out of search results with a `postToolUse` hook
 
 ## Development
 
 ```text
-bin/cli.js            CLI: `init` and `verify`
-src/pilotignore.cjs   the firewall hook (copied into projects by `init`)
+bin/cli.js            CLI: init and verify
+src/pilotignore.cjs   the hook (copied into projects by init)
 src/templates/        hook config and default .pilotignore
-tests/                automated tests, smoke test and the sandbox demo project
-assets/               images used in this README
+tests/                automated tests, smoke test and a sandbox demo project
 ```
 
-`npm test` runs the test suite. See [`tests/README.md`](tests/README.md) for the smoke test and manual testing with Copilot.
-
-## Links
-
-- [GitHub Copilot Hooks Reference](https://docs.github.com/en/copilot/reference/hooks-reference) — the underlying API
-- [Issues](https://github.com/vkerttula/pilotignore/issues) — bug, feature, weird behavior
-
-## Star This Repo
-
-`.pilotignore` keeps your secrets secret. Star cost zero. Fair trade. ⭐
+`npm test` runs the test suite. [`tests/README.md`](tests/README.md) covers the smoke test and hands-on testing with Copilot in a ready-made demo project.
 
 ## License
 
-MIT
+[MIT](LICENSE). The software is provided "as is", without warranty of any kind, and the authors aren't liable for any damages arising from its use. See the license for the full terms.
