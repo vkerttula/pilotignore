@@ -3,7 +3,6 @@
   "version": "0.2.0",
   "description": "Keep GitHub Copilot agents out of the files you list in .pilotignore. Works like .gitignore, for Copilot tool calls.",
   "type": "module",
-  "main": "bin/cli.js",
   "bin": {
     "pilotignore": "./bin/cli.js"
   },
@@ -14,7 +13,7 @@
   "bugs": "https://github.com/vkerttula/pilotignore/issues",
   "homepage": "https://github.com/vkerttula/pilotignore#readme",
   "engines": {
-    "node": ">=18"
+    "node": ">=20"
   },
   "scripts": {
     "test": "node --test",
@@ -24,6 +23,9 @@
   "keywords": [
     "copilot",
     "github",
+    "github-copilot",
+    "copilot-cli",
+    "gitignore",
     "hook",
     "ignore",
     "security",

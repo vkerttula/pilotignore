@@ -30,7 +30,8 @@ A rewrite of the rule engine and hook, plus a `verify` command and a test setup 
 - **Deny reasons name the path and rule**, e.g. `Access to '.env' is blocked by .pilotignore rule '.env'.` Previously the reason was a generic message.
 - **The default `.pilotignore` protects pilotignore itself.** New installs block reading or changing `.pilotignore` and the two hook files, and include a commented pattern-syntax reference.
 - **Package layout:** the hook moved from `templates/pilotignore.cjs` to `src/pilotignore.cjs`, and the templates to `src/templates/`. Installed files in your project keep their names and locations.
-- **Node.js >= 18** is now declared in `engines`.
+- **Node.js >= 20** is now declared in `engines`. CI tests Node 20, 22 and 24 on Linux, macOS and Windows.
+- The `main` field was removed from `package.json`. pilotignore is a CLI, not a library, and importing it used to run the CLI. The `pilotignore` command is unaffected.
 - The package description and README now describe pilotignore as a tool-call filter rather than a complete secrets boundary.
 
 ### Added
