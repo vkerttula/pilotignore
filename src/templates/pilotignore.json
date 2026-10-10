@@ -4,6 +4,7 @@
     "preToolUse": [
       {
         "type": "command",
+        "command": "node .github/hooks/pilotignore.cjs",
         "bash": "node .github/hooks/pilotignore.cjs",
         "powershell": "node .github\\hooks\\pilotignore.cjs",
         "windows": "node .github\\hooks\\pilotignore.cjs",

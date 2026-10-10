@@ -1,6 +1,15 @@
 # Add files here to hide them from GitHub Copilot
-# Examples:
-# secrets.json
-# .env
-# Block from reading this file
+# Supports gitignore-style patterns:
+#   .env                  exact file, matched at any depth
+#   *.pem                 wildcard: any file ending in .pem
+#   .env*                 .env, .env.local, .env.production, ...
+#   secrets/              everything under any secrets/ directory
+#   /config.json          anchored to the project root only
+#   secrets/**            everything under root secrets/
+#   !secrets/public.txt   negation: allow an exception
+# Protect the blocklist itself — prevents the agent from reading
+# the ruleset or disabling protection by editing/removing it
 .pilotignore
+# Protect the firewall files for the same reason
+.github/hooks/pilotignore.cjs
+.github/hooks/pilotignore.json
