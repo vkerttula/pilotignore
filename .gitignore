@@ -5,7 +5,7 @@ npm-debug.log*
 
 .copilot/
 .github/hooks/pilotignore.json
-.github/hooks/pilotignore.js
+.github/hooks/pilotignore.cjs
 
 .DS_Store
 Thumbs.db

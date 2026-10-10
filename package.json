@@ -7,8 +7,17 @@
   "bin": {
     "pilotignore": "./bin/cli.js"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vkerttula/pilotignore.git"
+  },
+  "bugs": "https://github.com/vkerttula/pilotignore/issues",
+  "homepage": "https://github.com/vkerttula/pilotignore#readme",
+  "engines": {
+    "node": ">=18"
+  },
   "scripts": {
-    "test": "node --test tests/"
+    "test": "node --test"
   },
   "keywords": [
     "copilot",
