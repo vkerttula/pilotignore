@@ -1,0 +1,9 @@
+# Personal files
+shopping-list.txt
+/drafts/cookbook-intro.md
+family-recipes/**
+
+# Keep the ruleset and firewall itself out of reach
+.pilotignore
+.github/hooks/pilotignore.cjs
+.github/hooks/pilotignore.json

@@ -2,6 +2,7 @@ node_modules/
 
 *.log
 npm-debug.log*
+*.tgz
 
 .copilot/
 .github/hooks/pilotignore.json
@@ -9,3 +10,4 @@ npm-debug.log*
 
 .DS_Store
 Thumbs.db
+/sandbox/

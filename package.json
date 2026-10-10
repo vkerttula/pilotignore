@@ -17,7 +17,9 @@
     "node": ">=18"
   },
   "scripts": {
-    "test": "node --test"
+    "test": "node --test",
+    "smoke": "node tests/smoke.mjs",
+    "sandbox": "node tests/sandbox/create.mjs"
   },
   "keywords": [
     "copilot",
