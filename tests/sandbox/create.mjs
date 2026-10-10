@@ -23,7 +23,9 @@ const target = path.resolve(
 
 function run(cmd, cmdArgs, cwd) {
   return new Promise((resolve) => {
-    const child = spawn(cmd, cmdArgs, { cwd });
+    // On Windows npm is npm.cmd, which Node can only start through a shell.
+    const shell = process.platform === "win32" && cmd === "npm";
+    const child = spawn(cmd, cmdArgs, { cwd, shell });
     let stderr = "";
     child.stderr.on("data", (d) => (stderr += d));
     child.on("close", (code) => resolve({ code, stderr }));

@@ -5,6 +5,8 @@ import path from "path";
 import { fileURLToPath } from "url";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
+// On Windows npm is npm.cmd, which Node can only start through a shell.
+const npmShell = process.platform === "win32";
 
 let failures = 0;
 const check = (cond, label) => {
@@ -14,7 +16,7 @@ const check = (cond, label) => {
 
 function run(cmd, args, cwd, input = null) {
   return new Promise((resolve) => {
-    const child = spawn(cmd, args, { cwd });
+    const child = spawn(cmd, args, { cwd, shell: npmShell && cmd === "npm" });
     let stdout = "";
     let stderr = "";
     child.stdout.on("data", (d) => (stdout += d));
@@ -33,7 +35,7 @@ console.log(
 );
 
 // 1. Pack the package exactly like npm publish would ship it
-const packOut = execFileSync("npm", ["pack"], { cwd: root })
+const packOut = execFileSync("npm", ["pack"], { cwd: root, shell: npmShell })
   .toString()
   .split("\n")
   .filter((l) => l.trim().endsWith(".tgz"))
@@ -51,7 +53,8 @@ try {
   );
   const install = await run(
     "npm",
-    ["install", "--silent", "--no-audit", "--no-fund", tarball],
+    // quoted for the Windows shell, in case the path contains spaces
+    ["install", "--silent", "--no-audit", "--no-fund", npmShell ? `"${tarball}"` : tarball],
     dir,
   );
   check(install.code === 0, "npm install of packed tarball");
